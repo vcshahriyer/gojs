@@ -164,6 +164,7 @@
             locationSpot: go.Spot.Top, // location point is the middle top of the PORT
             linkConnected: updatePortHeight,
             linkDisconnected: updatePortHeight,
+            resizable: true,
             toolTip: $(
               "ToolTip",
               $(
@@ -178,32 +179,28 @@
           new go.Binding("location", "pos", go.Point.parse).makeTwoWay(
             go.Point.stringify
           ),
+          { selectable: true },
+          { resizable: true, resizeObjectName: "Picture" },
           // The main element of the Spot panel is a vertical panel housing an optional icon,
           // plus a rectangle that acts as the port
           $(
             go.Panel,
             "Vertical",
             $(
-              go.Shape,
+              go.Picture,
               {
-                width: 40,
-                height: 0,
-                stroke: null,
-                strokeWidth: 0,
-                fill: "gray",
+                name: "Picture",
+                desiredSize: new go.Size(100, 100),
+                margin: 1.5,
               },
-              new go.Binding("height", "icon", function () {
-                return 40;
-              }),
-              new go.Binding("fill", "color", colorFunc),
-              new go.Binding("geometry", "icon", geoFunc)
+              new go.Binding("source", "key", findHeadShot)
             ),
             $(
               go.Shape,
               {
                 name: "PORT",
                 width: 40,
-                height: 24,
+                height: 5,
                 margin: new go.Margin(-1, 0, 0, 0),
                 stroke: null,
                 strokeWidth: 0,
@@ -226,10 +223,15 @@
                 alignmentFocus: go.Spot.BottomCenter,
                 editable: true,
               },
+              new go.Binding("font", "font"),
               new go.Binding("text").makeTwoWay()
             )
           )
         );
+        function findHeadShot(key) {
+          if (key < 0 || key > 16) return "images/1.jpg"; // There are only 16 images on the server
+          return "imageLibrary/" + key + ".jpg";
+        }
 
         function updatePortHeight(node, link, port) {
           var sideinputs = 0;
@@ -273,7 +275,8 @@
               return go.Brush.lighten((n && Colors[n.data.color]) || "gray");
             }).ofObject(),
             // but use the link's data.color if it is set
-            new go.Binding("stroke", "color", colorFunc)
+            new go.Binding("stroke", "color", colorFunc),
+            new go.Binding("strokeWidth", "width").makeTwoWay()
           ),
           $(go.Shape, {
             isPanelMain: true,
@@ -307,14 +310,14 @@
           nodeTemplate: myDiagram.nodeTemplate, // shared with the main Diagram
           model: $(go.GraphLinksModel, {
             nodeDataArray: [
-              { icon: "natgas", text: "Gas\nCompanies" },
-              { icon: "oil", text: "Oil\nCompanies" },
-              { icon: "gasprocessing", text: "Gas Processing" },
-              { icon: "fractionation", text: "Gas Fractionation" },
-              { icon: "pyrolysis", text: "Pyrolysis (Cracking)" },
-              { icon: "polymerization", text: "Basic Polymers" },
-              { text: "Intermediates" },
-              { icon: "finishedgas", text: "LPG, Naphtha,\nMTBE" },
+              { key: 1, icon: "natgas", text: "OU1" },
+              { key: 2, icon: "oil", text: "OU2" },
+              { key: 3, icon: "gasprocessing", text: "AH1.1" },
+              { key: 4, icon: "fractionation", text: "AH1.2" },
+              { key: 5, icon: "pyrolysis", text: "AH2.1" },
+              { key: 6, icon: "polymerization", text: "AH2.2" },
+              { key: 7, text: "AH3.1" },
+              { key: 8, icon: "finishedgas", text: "LPG, Naphtha,\nMTBE" },
             ], // end nodeDataArray
           }), // end model
         }); // end Palette
@@ -350,6 +353,14 @@
               show: Inspector.showIfLink,
               type: "select",
               choices: ["left", "right"],
+            },
+            font: {
+              type: "text",
+            },
+            width: {
+              show: Inspector.showIfLink,
+              type: "select",
+              choices: [5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 22, 24, 26],
             },
           },
           propertyModified: onSelectionChanged,
@@ -466,8 +477,8 @@
         <textarea id="mySavedModel" style="width: 800px; height: 400px;">
 { "class": "GraphLinksModel",
   "nodeDataArray": [ 
-{"key":1, "pos":"-170 -48", "icon":"natgas", "color":"blue", "text":"Gas\nCompanies", "description":"Provides natural gas liquids (NGLs).", "caption":"Gas Drilling Well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/BarnettShaleDrilling-9323.jpg/256px-BarnettShaleDrilling-9323.jpg"},
-{"key":2, "pos":"-170 96", "icon":"oil", "color":"blue", "text":"Oil\nCompanies", "description":"Provides associated petroleum gas (APG). This type of gas used to be released as waste from oil drilling, but is now commonly captured for processing.", "caption":"Offshore oil well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Oil_platform_P-51_%28Brazil%29.jpg/512px-Oil_platform_P-51_%28Brazil%29.jpg"},
+{"key":1, "pos":"-170 -48", "icon":"natgas", "color":"blue", "text":"OU1", "description":"Provides natural gas liquids (NGLs).", "caption":"Gas Drilling Well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/BarnettShaleDrilling-9323.jpg/256px-BarnettShaleDrilling-9323.jpg"},
+{"key":2, "pos":"-170 96", "icon":"oil", "color":"blue", "text":"AH1.1", "description":"Provides associated petroleum gas (APG). This type of gas used to be released as waste from oil drilling, but is now commonly captured for processing.", "caption":"Offshore oil well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Oil_platform_P-51_%28Brazil%29.jpg/512px-Oil_platform_P-51_%28Brazil%29.jpg"},
 {"key":3, "pos":"-70 90", "icon":"gasprocessing", "color":"blue", "text":"Gas Processing", "description":"APG processing turns associated petrolium gas into natural gas liquids (NGLs) and stable natural gas (SGN).", "caption":"Natural gas plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Solohiv_natural_gas_plant_-_fragment.jpg/256px-Solohiv_natural_gas_plant_-_fragment.jpg"},
 {"key":4, "pos":"40 -50", "icon":"fractionation", "color":"blue", "text":"Gas Fractionation", "description":"Natural gas liquids are separated into individual hydrocarbons like propane and butanes, hydrocarbon mixtures (naphtha) and liquefied petroleum gases (LPGs).", "caption":"Gas Plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Gasblok.jpg/256px-Gasblok.jpg"},
 {"key":5, "pos":"140 -50", "icon":"pyrolysis", "color":"orange", "text":"Pyrolysis (Cracking)", "description":"Liquefied petroleum gases (LPGs) are transformed into Ethylene, propylene, benzene, and other by-products.", "caption":"Pyrolysis plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/6/6c/Guelph.jpg"},
