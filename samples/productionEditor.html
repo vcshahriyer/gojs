@@ -154,8 +154,21 @@
             $(go.Picture, "./background/primary.png")
           )
         );
+        //the background image end
+        // the background image, a floor plan
+        myDiagram.add(
+          $(
+            go.Part, // this Part is not bound to any model data
+            {
+              layerName: "Background",
+              position: new go.Point(0, 0),
+              selectable: true,
+              pickable: true,
+            },
+            $(go.Picture, "./background/primary2.png")
+          )
+        );
         // the background image end
-
         myDiagram.nodeTemplate = $(
           go.Node,
           "Spot",
@@ -476,32 +489,8 @@
         <p>Below is the JSON data for the model:</p>
         <textarea id="mySavedModel" style="width: 800px; height: 400px;">
 { "class": "GraphLinksModel",
-  "nodeDataArray": [ 
-{"key":1, "pos":"-170 -48", "icon":"natgas", "color":"blue", "text":"OU1", "description":"Provides natural gas liquids (NGLs).", "caption":"Gas Drilling Well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/BarnettShaleDrilling-9323.jpg/256px-BarnettShaleDrilling-9323.jpg"},
-{"key":2, "pos":"-170 96", "icon":"oil", "color":"blue", "text":"AH1.1", "description":"Provides associated petroleum gas (APG). This type of gas used to be released as waste from oil drilling, but is now commonly captured for processing.", "caption":"Offshore oil well", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Oil_platform_P-51_%28Brazil%29.jpg/512px-Oil_platform_P-51_%28Brazil%29.jpg"},
-{"key":3, "pos":"-70 90", "icon":"gasprocessing", "color":"blue", "text":"Gas Processing", "description":"APG processing turns associated petrolium gas into natural gas liquids (NGLs) and stable natural gas (SGN).", "caption":"Natural gas plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Solohiv_natural_gas_plant_-_fragment.jpg/256px-Solohiv_natural_gas_plant_-_fragment.jpg"},
-{"key":4, "pos":"40 -50", "icon":"fractionation", "color":"blue", "text":"Gas Fractionation", "description":"Natural gas liquids are separated into individual hydrocarbons like propane and butanes, hydrocarbon mixtures (naphtha) and liquefied petroleum gases (LPGs).", "caption":"Gas Plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Gasblok.jpg/256px-Gasblok.jpg"},
-{"key":5, "pos":"140 -50", "icon":"pyrolysis", "color":"orange", "text":"Pyrolysis (Cracking)", "description":"Liquefied petroleum gases (LPGs) are transformed into Ethylene, propylene, benzene, and other by-products.", "caption":"Pyrolysis plant", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/6/6c/Guelph.jpg"},
-{"key":6, "pos":"340 -130", "icon":"polymerization", "color":"red", "text":"Basic Polymers", "description":"Ethylene and propylene (monomers) are processed into end products using various methods (polymerization).", "caption":"Plastics engineering-Polymer products", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Plastics_engineering-Polymer_products.jpg/256px-Plastics_engineering-Polymer_products.jpg"},
-{"key":7, "pos":"340 -40", "icon":"polymerization", "color":"green", "text":"Plastics", "description":"Polymerization produces PET, glycols, alcohols, expandable polystyrene, acrylates, BOPP-films and geosynthetics.", "caption":"Lego Color Bricks", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Lego_Color_Bricks.jpg/256px-Lego_Color_Bricks.jpg"},
-{"key":8, "pos":"340 50", "icon":"polymerization", "color":"lightgreen", "text":"Synthetic Rubbers", "description":"Polymerization produces commodity and specialty rubbers and thermoplastic elastomers.", "caption":"Sheet of synthetic rubber coming off the rolling mill at the plant of Goodrich", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Sheet_of_synthetic_rubber_coming_off_the_rolling_mill_at_the_plant_of_Goodrich.jpg/512px-Sheet_of_synthetic_rubber_coming_off_the_rolling_mill_at_the_plant_of_Goodrich.jpg"},
-{"key":9, "pos":"340 120", "color":"orange", "text":"Intermediates", "description":"Produced Ethylene, Propylene, Butenes, Benzene, and other by-products.", "caption":"Propylene Containers", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/XVJ-12_Propylene_%288662385917%29.jpg/256px-XVJ-12_Propylene_%288662385917%29.jpg"},
-{"key":10, "pos":"340 210", "icon":"finishedgas", "color":"blue", "text":"LPG, Naphtha,\nMTBE", "description":"Propane, butane, and other general purpose fuels and byproducts.", "caption":"Liquid Petroleum Gas Truck", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/LPG_Truck.jpg/256px-LPG_Truck.jpg"},
-{"key":11, "pos":"340 300", "icon":"finishedgas", "color":"blue", "text":"Natural Gas, NGLs", "description":"Used for heating, cooking, and electricity generation", "caption":"Natural Gas Flame", "imgsrc":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/%22LPG_flame%22.JPG/512px-%22LPG_flame%22.JPG"}
- ],
-  "linkDataArray": [ 
-{"from":1, "to":4,"points":[-150,-41,-140,-41,-69,-41,-69,-41.33333333333333,2,-41.33333333333333,20,-41.33333333333333]},
-{"from":2, "to":3, "points":[-150,103,-140,103,-120,103,-120,103,-100,103,-90,103]},
-{"from":3, "to":4, "points":[-50,98.66666666666667,-40,98.66666666666667,-15,98.66666666666667,-15,-32.666666666666664,10,-32.666666666666664,20,-32.666666666666664]},
-{"from":3, "to":5, "toSpot":"BottomSide", "points":[-50,107.33333333333333,-32,107.33333333333333,140,107.33333333333333,140,46.666666666666664,140,-14,140,-24]},
-{"from":4, "to":5, "points":[60,-37,70,-37,90,-37,90,-37,110,-37,120,-37]},
-{"from":3, "to":11, "fromSpot":"BottomSide", "points":[-70,116,-70,126,-70,307,120,307,310,307,320,307]},
-{"from":4, "to":10, "fromSpot":"BottomSide", "points":[40,-12,40,-2,40,217,175,217,310,217,320,217]},
-{"from":5, "to":6, "fromSpot":"Right", "points":[160,-37,170,-37,240,-37,240,-123,310,-123,320,-123]},
-{"from":5, "to":7, "fromSpot":"Right", "points":[160,-37,170,-37,240,-37,240,-33,310,-33,320,-33]},
-{"from":5, "to":8, "fromSpot":"Right", "points":[160,-37,170,-37,240,-37,240,57,310,57,320,57]},
-{"from":5, "to":9, "fromSpot":"Right", "points":[160,-37,170,-37,240,-37,240,127,310,127,320,127]}
- ]}
+  "nodeDataArray": [ ],
+  "linkDataArray": []}
     </textarea
         >
       </div>
