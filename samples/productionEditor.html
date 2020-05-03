@@ -433,12 +433,22 @@
           { key: 1, text: "Very new node" },
         ];
       }
+      function capture() {
+        var canvas = document.getElementsByClassName("mystyle")[1];
+        image = canvas
+          .toDataURL("image/png", 1.0)
+          .replace("image/png", "image/octet-stream");
+        var link = document.createElement("a");
+        link.download = "my-image.png";
+        link.href = image;
+        link.click();
+      }
     </script>
   </head>
   <body onload="init()">
     <div id="sample">
       <div style="width: 100%;">
-        <button onclick="addNodeToPallete()">Add node</button>
+        <button onclick="capture()">Download</button>
         <div
           id="myPaletteDiv"
           style="
