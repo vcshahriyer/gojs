@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Copyright 1998-2020 by Northwoods Software Corporation. -->
     <script src="../release/go.js"></script>
-    <script src="../assets/js/goSamples.js"></script>
+    <!-- <script src="../assets/js/goSamples.js"></script> -->
     <!-- this is only for the GoJS Samples framework -->
     <link
       href="https://fonts.googleapis.com/css?family=Lato:400,700"
@@ -242,7 +242,7 @@
           )
         );
         function findHeadShot(key) {
-          if (key < 0 || key > 16) return "images/1.jpg"; // There are only 16 images on the server
+          if (key < 0 || key > 16) return "imageLibrary/1.jpg"; // There are only 16 images on the server
           return "imageLibrary/" + key + ".jpg";
         }
 
@@ -321,33 +321,26 @@
           initialContentAlignment: go.Spot.TopLeft,
           initialScale: 0.8,
           nodeTemplate: myDiagram.nodeTemplate, // shared with the main Diagram
-          model: $(go.GraphLinksModel, {
-            nodeDataArray: [
-              { key: 1, icon: "natgas", text: "OU1" },
-              { key: 2, icon: "oil", text: "OU2" },
-              { key: 3, icon: "gasprocessing", text: "AH1.1" },
-              { key: 4, icon: "fractionation", text: "AH1.2" },
-              { key: 5, icon: "pyrolysis", text: "AH2.1" },
-              { key: 6, icon: "polymerization", text: "AH2.2" },
-              { key: 7, text: "AH3.1" },
-              { key: 8, icon: "finishedgas", text: "LPG, Naphtha,\nMTBE" },
-            ], // end nodeDataArray
-          }), // end model
         }); // end Palette
-
+        myPalette.model.nodeDataArray = [
+          { key: 1, text: "OU1" },
+          { key: 2, text: "OU2" },
+          { key: 3, text: "AH1.1" },
+          { key: 4, text: "AH1.2" },
+          { key: 5, text: "AH2.1" },
+          { key: 6, text: "AH2.2" },
+          { key: 7, text: "AH3.1" },
+          { key: 8, text: "LPG, Naphtha,\nMTBE" },
+        ];
         // show and let the designer edit some data properties of the selected node or link
         myInspector = new Inspector("myInspector", myDiagram, {
           properties: {
             key: { show: false },
             pos: { show: false },
-            icon: {
-              show: Inspector.showIfNode,
-              type: "select",
-              choices: IconNames,
-            },
             color: { type: "select", choices: ColorNames },
             text: { show: Inspector.showIfNode },
             caption: { show: Inspector.showIfNode },
+            description: { show: Inspector.showIfNode },
             imgsrc: { show: Inspector.showIfNode },
             from: { show: false },
             to: { show: false },
@@ -395,13 +388,13 @@
             // console.log(link.fromNode.data, link.toNode.data);
             // console.log(link.data);
             if (link.data.flow == "right") {
-              var off = shape.strokeDashOffset - 3;
-              // animate (move) the stroke dash
-              shape.strokeDashOffset = off <= 0 ? 60 : off;
-            } else {
               var off = shape.strokeDashOffset + 3;
               // animate (move) the stroke dash
               shape.strokeDashOffset = off >= 60 ? 0 : off;
+            } else {
+              var off = shape.strokeDashOffset - 3;
+              // animate (move) the stroke dash
+              shape.strokeDashOffset = off <= 0 ? 60 : off;
             }
           });
           diagram.skipsUndoManager = oldskips;
@@ -427,17 +420,31 @@
         title.textContent = data.text;
         description.textContent = data.description;
       }
+      function addNodeToPallete() {
+        myPalette.model.nodeDataArray = [
+          { key: 1, text: "new" },
+          { key: 2, text: "OU2" },
+          { key: 3, text: "AH1.1" },
+          { key: 4, text: "AH1.2" },
+          { key: 5, text: "AH2.1" },
+          { key: 6, text: "AH2.2" },
+          { key: 7, text: "AH3.1" },
+          { key: 8, text: "LPG, Naphtha,\nMTBE" },
+          { key: 1, text: "Very new node" },
+        ];
+      }
     </script>
   </head>
   <body onload="init()">
     <div id="sample">
       <div style="width: 100%;">
+        <button onclick="addNodeToPallete()">Add node</button>
         <div
           id="myPaletteDiv"
           style="
             border: solid 1px black;
             width: 100%;
-            height: 100px;
+            height: 130px;
             background: whitesmoke;
           "
         ></div>
@@ -469,28 +476,8 @@
         <div id="myInspector"></div>
       </div>
       <div>
-        <p>
-          This process flow editor lets the user design diagrams to be shown by
-          <a href="productionProcess.html">Production Process</a>.
-        </p>
-        <p>
-          At the top is a <a>Palette</a>, from which the designer can
-          drag-and-drop nodes down into the main <a>Diagram</a>. When the
-          end-user selects a Node, more information is shown in the gray area
-          below the diagram. For the designer, the <a>Inspector</a> also shows
-          details about a selected Node or Link below the diagram, where the
-          designer may modify some of the properties.
-        </p>
-        <p>
-          Each <a>Node</a> consists of an SVG <a>Shape</a> at the top and a
-          rectangular port at the bottom. The designer can draw new pipes
-          (<a>Link</a>s) by dragging from a port to a different node's port.
-        </p>
-        <p>Below is the JSON data for the model:</p>
         <textarea id="mySavedModel" style="width: 800px; height: 400px;">
-{ "class": "GraphLinksModel",
-  "nodeDataArray": [ ],
-  "linkDataArray": []}
+          { "class": "GraphLinksModel"}
     </textarea
         >
       </div>
