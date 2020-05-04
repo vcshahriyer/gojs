@@ -19,6 +19,7 @@
     />
     <link rel="stylesheet" href="../extensions/dataInspector.css" />
     <script src="../extensions/dataInspector.js"></script>
+    <script src="../extensions/Figures.js"></script>
     <script id="code">
       function init() {
         if (window.goSamples) goSamples(); // init for these samples -- you don't need to call this
@@ -152,7 +153,8 @@
               selectable: true,
               pickable: true,
             },
-            $(go.Picture, "./background/primary.png")
+            { resizable: true, resizeObjectName: "bac1" },
+            $(go.Picture, { name: "bac1" }, "./background/primary.png")
           )
         );
         //the background image end
@@ -166,7 +168,8 @@
               selectable: true,
               pickable: true,
             },
-            $(go.Picture, "./background/primary2.png")
+            { resizable: true, resizeObjectName: "bac2" },
+            $(go.Picture, { name: "bac2" }, "./background/primary2.png")
           )
         );
         // the background image end
@@ -266,11 +269,12 @@
           {
             layerName: "Background",
             routing: go.Link.Orthogonal,
-            corner: 15,
+            corner: 10,
             reshapable: true,
             resegmentable: true,
             fromSpot: go.Spot.RightSide,
             toSpot: go.Spot.LeftSide,
+            toShortLength: 7,
           },
           // make sure links come in from the proper direction and go out appropriately
           new go.Binding("fromSpot", "fromSpot", go.Spot.parse),
@@ -283,7 +287,6 @@
               isPanelMain: true,
               stroke: "gray",
               strokeWidth: 5,
-              toArrow: "Standard",
             },
             // get the default stroke color from the fromNode
             new go.Binding("stroke", "fromNode", function (n) {
@@ -293,12 +296,27 @@
             new go.Binding("stroke", "color", colorFunc),
             new go.Binding("strokeWidth", "width").makeTwoWay()
           ),
+          // $(go.Shape, "Arrow", {
+          //   isPanelMain: true,
+          //   name: "PIPE",
+          //   strokeWidth: 3,
+          //   width: 25,
+          //   height: 15,
+          //   strokeDashArray: [20, 40],
+          //   strokeCap: "round",
+          // })
           $(go.Shape, {
             isPanelMain: true,
             stroke: "white",
             strokeWidth: 3,
             name: "PIPE",
             strokeDashArray: [20, 40],
+          }),
+          $(go.Shape, {
+            toArrow: "Triangle",
+            scale: 1.5,
+            fill: "gray",
+            stroke: null,
           })
         );
 
@@ -455,6 +473,11 @@
         localStorage.setItem("modelData", "{}");
         window.location = window.location.href;
       }
+      function RestoreModel() {
+        var jsonData = document.getElementById("restoreModel").value;
+        localStorage.setItem("modelData", jsonData);
+        window.location = window.location.href;
+      }
     </script>
   </head>
   <body onload="init()">
@@ -544,10 +567,9 @@
         </div>
       </div>
       <div class="container">
-        <textarea id="mySavedModel" style="width: 60%; height: 400px;">
+        <textarea id="mySavedModel" style="width: 40%; height: 400px;">
           { "class": "GraphLinksModel"}
-    </textarea
-        >
+        </textarea>
         <div style="width: 35%; padding-left: 20px;">
           <button onclick="clearPalette()">Clear palette</button>
           <button onclick="clearDiagram()">Clear Diagram</button>
@@ -563,6 +585,12 @@
               name="submit"
             />
           </form>
+          <textarea
+            id="restoreModel"
+            placeholder="Paste your json to resotre diagram"
+            style="width: 100%; height: 300px;"
+          ></textarea>
+          <button onclick="RestoreModel()">Restore</button>
         </div>
       </div>
     </div>
