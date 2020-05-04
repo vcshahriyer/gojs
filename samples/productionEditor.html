@@ -137,6 +137,7 @@
                 document.getElementById(
                   "mySavedModel"
                 ).textContent = e.model.toJson();
+                localStorage.setItem("modelData", e.model.toJson());
               }
             },
           }
@@ -206,7 +207,7 @@
                 desiredSize: new go.Size(100, 100),
                 margin: 1.5,
               },
-              new go.Binding("source", "key", findHeadShot)
+              new go.Binding("source", "slug", findHeadShot)
             ),
             $(
               go.Shape,
@@ -281,7 +282,8 @@
             {
               isPanelMain: true,
               stroke: "gray",
-              strokeWidth: 10,
+              strokeWidth: 5,
+              toArrow: "Standard",
             },
             // get the default stroke color from the fromNode
             new go.Binding("stroke", "fromNode", function (n) {
@@ -312,7 +314,8 @@
         ];
 
         myDiagram.model = go.Model.fromJson(
-          document.getElementById("mySavedModel").textContent
+          // document.getElementById("mySavedModel").textContent
+          localStorage.getItem("modelData")
         );
 
         // show a collection of node types that the designer may drag into the main diagram
@@ -322,16 +325,9 @@
           initialScale: 0.8,
           nodeTemplate: myDiagram.nodeTemplate, // shared with the main Diagram
         }); // end Palette
-        myPalette.model.nodeDataArray = [
-          { key: 1, text: "OU1" },
-          { key: 2, text: "OU2" },
-          { key: 3, text: "AH1.1" },
-          { key: 4, text: "AH1.2" },
-          { key: 5, text: "AH2.1" },
-          { key: 6, text: "AH2.2" },
-          { key: 7, text: "AH3.1" },
-          { key: 8, text: "LPG, Naphtha,\nMTBE" },
-        ];
+        var JsonData = localStorage.getItem("paletteData");
+        var paletteData = JSON.parse(JsonData);
+        myPalette.model.nodeDataArray = paletteData;
         // show and let the designer edit some data properties of the selected node or link
         myInspector = new Inspector("myInspector", myDiagram, {
           properties: {
@@ -421,17 +417,24 @@
         description.textContent = data.description;
       }
       function addNodeToPallete() {
-        myPalette.model.nodeDataArray = [
-          { key: 1, text: "new" },
-          { key: 2, text: "OU2" },
-          { key: 3, text: "AH1.1" },
-          { key: 4, text: "AH1.2" },
-          { key: 5, text: "AH2.1" },
-          { key: 6, text: "AH2.2" },
-          { key: 7, text: "AH3.1" },
-          { key: 8, text: "LPG, Naphtha,\nMTBE" },
-          { key: 1, text: "Very new node" },
-        ];
+        var data = myPalette.model.nodeDataArray.map((item) => {
+          var obj = {};
+          obj.slug = item.slug;
+          obj.text = item.text;
+          return obj;
+        });
+        var imgkey = document.getElementById("imagekey").value;
+        var imglebel = document.getElementById("imglebel").value;
+        if (imgkey != "" && imglebel != "") {
+          data.push({
+            slug: imgkey,
+            text: imglebel,
+          });
+          var jsonData = JSON.stringify(data);
+          // console.log(jsonData);
+          localStorage.setItem("paletteData", jsonData);
+          myPalette.model.nodeDataArray = data;
+        }
       }
       function capture() {
         var canvas = document.getElementsByClassName("mystyle")[1];
@@ -444,13 +447,38 @@
         link.href = image;
         link.click();
       }
+      function clearPalette() {
+        localStorage.setItem("paletteData", "[]");
+        window.location = window.location.href;
+      }
+      function clearDiagram() {
+        localStorage.setItem("modelData", "{}");
+        window.location = window.location.href;
+      }
     </script>
   </head>
   <body onload="init()">
     <div id="sample">
       <div style="width: 100%;">
-        <button onclick="capture()">Download</button>
-        <img id="cap" src="" alt="" />
+        <div class="myform">
+          <div class="myform-img">
+            <form
+              action="libraryUpload.php"
+              method="post"
+              enctype="multipart/form-data"
+              id="libraryImage"
+            >
+              Only JPG:<input type="file" name="image" /> Set Key:
+              <input required type="text" name="imgkey" />
+              <input type="submit" value="upload" name="submit" />
+            </form>
+          </div>
+          <div class="form-palette">
+            Key: <input required type="text" id="imagekey" /> Label:
+            <input required type="text" id="imglebel" />
+            <button onclick="addNodeToPallete()">add</button>
+          </div>
+        </div>
         <div
           id="myPaletteDiv"
           style="
@@ -486,12 +514,56 @@
           <p id="Description">Select a node to see more information.</p>
         </div>
         <div id="myInspector"></div>
+        <div>
+          <button onclick="capture()">Save to PNG</button>
+          <div class="myform2">
+            <form
+              action="upload.php"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <label for="cars">Choose which background to Upload : </label>
+              <select name="background" id="cars">
+                <option value="primary">Background 1</option>
+                <option value="primary2">Background 2</option>
+              </select>
+              <input type="file" name="fileToUpload" id="fileToUpload" />
+              <input type="submit" value="Upload Image" name="submit" />
+            </form>
+          </div>
+          <div class="myform2">
+            <form action="backgroundDelete.php" method="post">
+              <label for="cars">Choose which background to Delete : </label>
+              <select name="bacDelete">
+                <option value="primary">Background 1</option>
+                <option value="primary2">Background 2</option>
+              </select>
+              <input type="submit" value="Delete Image" name="submit" />
+            </form>
+          </div>
+        </div>
       </div>
-      <div>
-        <textarea id="mySavedModel" style="width: 800px; height: 400px;">
+      <div class="container">
+        <textarea id="mySavedModel" style="width: 60%; height: 400px;">
           { "class": "GraphLinksModel"}
     </textarea
         >
+        <div style="width: 35%; padding-left: 20px;">
+          <button onclick="clearPalette()">Clear palette</button>
+          <button onclick="clearDiagram()">Clear Diagram</button>
+          <form action="deleteAllLibraryImage.php" method="post">
+            <input
+              type="text"
+              name="alldelete"
+              placeholder='Type "delete" and submit'
+            />
+            <input
+              type="submit"
+              value="Delete All Library Image"
+              name="submit"
+            />
+          </form>
+        </div>
       </div>
     </div>
   </body>
