@@ -9,7 +9,7 @@
         
         }
         closedir($handle);
-        echo '<a href="/Gojs/samples/productionEditor.html"> Go Back</a>';
+        echo '<a href="/Gojs/samples/productionEditor.php"> Go Back</a>';
     }
     
     

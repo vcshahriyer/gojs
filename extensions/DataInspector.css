@@ -31,11 +31,36 @@ see also: dataInspector.js, dataInspector.html
 .container {
   display: flex;
 }
+.error {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+}
+.success {
+  padding: 20px;
+  background-color: #3c763d;
+  color: white;
+}
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
 .myform {
   padding: 14px;
   padding-left: 0;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 input[type="text"],
 select {

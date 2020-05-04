@@ -1,4 +1,5 @@
 <?php
+session_start();
 $target_dir = "background/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
@@ -7,43 +8,50 @@ $backgroundName = "";
 // Check if option selected
 if(isset($_POST["background"])){
     $backgroundName = $target_dir.$_POST["background"].".png";
+}else{
+    $uploadOk = 0;
 }
 
 
-// Check if image file is a actual image or fake image
-if(isset($_POST["submit"])) {
-    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-    if($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
-        $uploadOk = 1;
-    } else {
-        echo "File is not an image.";
-        $uploadOk = 0;
-    }
-}
+// // Check if image file is a actual image or fake image
+// if(isset($_POST["submit"])) {
+//     $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+//     if($check !== false) {
+//         echo "File is an image - " . $check["mime"] . ".";
+//         $uploadOk = 1;
+//     } else {
+//         echo "File is not an image.";
+//         $uploadOk = 0;
+//     }
+// }
 // Check if file already exists
 if (file_exists($backgroundName)) {
-    echo "Sorry, file already exists.";
-    $uploadOk = 0;
+    $_SESSION['message'] = "Sorry, background {$_POST["background"]} already exists. ";
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    return 0;
 }
 
 // Allow certain file formats
 if($imageFileType != "png") {
-    echo "Sorry, only PNG files are allowed.";
-    $uploadOk = 0;
+    $_SESSION['message'] = "Sorry, only PNG files is allowed.";
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    return 0;
 }
 // Check if $uploadOk is set to 0 by an error
 if ($uploadOk == 0) {
-    echo "Sorry, your file was not uploaded.";
+    $_SESSION['message'] = "Sorry, your file was not uploaded.";
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+    return 0;
 // if everything is ok, try to upload file
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"],$backgroundName)) {
-        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+        $_SESSION['success'] = "The background {$_POST["background"]} has been uploaded.";
         header('Location: ' . $_SERVER['HTTP_REFERER']);
-
+        return 0;
     } else {
-        echo "Sorry, there was an error uploading your file.";
+        $_SESSION['message'] = "Sorry, there was an error uploading your file.";
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
     }
 }
-echo '<a href="/Gojs/samples/productionEditor.html"> Go Back</a>';
+echo '<a href="/Gojs/samples/productionEditor.php"> Go Back</a>';
 ?>

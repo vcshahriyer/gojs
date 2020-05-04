@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿<?php
+    session_start();
+?>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -23,7 +26,6 @@
     <script id="code">
       function init() {
         if (window.goSamples) goSamples(); // init for these samples -- you don't need to call this
-
         // Abstract colors
         var Colors = {
           red: "#be4b15",
@@ -169,7 +171,7 @@
               pickable: true,
             },
             { resizable: true, resizeObjectName: "bac2" },
-            $(go.Picture, { name: "bac2" }, "./background/primary2.png")
+            $(go.Picture, { name: "bac2" }, "./background/secondary.png")
           )
         );
         // the background image end
@@ -386,6 +388,7 @@
           propertyModified: onSelectionChanged,
         });
         loop();
+        deleteNodeHtml();
       }
       var opacity = 1;
       var down = true;
@@ -399,8 +402,6 @@
             if (shape == null) {
               return;
             }
-            // console.log(link.fromNode.data, link.toNode.data);
-            // console.log(link.data);
             if (link.data.flow == "right") {
               var off = shape.strokeDashOffset + 3;
               // animate (move) the stroke dash
@@ -449,7 +450,6 @@
             text: imglebel,
           });
           var jsonData = JSON.stringify(data);
-          // console.log(jsonData);
           localStorage.setItem("paletteData", jsonData);
           myPalette.model.nodeDataArray = data;
         }
@@ -478,11 +478,56 @@
         localStorage.setItem("modelData", jsonData);
         window.location = window.location.href;
       }
+      function paletteDelete (){
+        var node = document.getElementById("paletteDelete").value;
+        var data = myPalette.model.nodeDataArray.filter((item)=>{
+          if(item.slug === node){
+            return false;
+          }
+          return true;
+        }).map((item) => {
+          var obj = {};
+            obj.slug = item.slug;
+            obj.text = item.text;
+            return obj;  
+        });
+        var jsonData = JSON.stringify(data);
+        localStorage.setItem("paletteData", jsonData);
+        myPalette.model.nodeDataArray = data;
+      }
+      function deleteNodeHtml() {
+        const div = document.createElement('div');
+        div.className = 'row';
+
+        div.innerHTML = "Choose node to delete:<select name=\"background\" id=\"paletteDelete\">"
+              + myPalette.model.nodeDataArray.map((item) => { 
+                  return `<option value="${item.slug}">${item.text}</option>`
+                })+
+              '</select><button onclick="paletteDelete()">Delete</button>';
+        document.getElementById('deleteNode').appendChild(div);
+      }
     </script>
   </head>
   <body onload="init()">
     <div id="sample">
       <div style="width: 100%;">
+      <?php 
+      if(!empty($_SESSION['message'])) {
+         $message = $_SESSION['message'];
+          echo "<div class=\"error\">
+              <span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span> 
+              {$message}
+            </div>";
+          unset($_SESSION['message']);
+      }elseif(!empty($_SESSION['success'])){
+        $message = $_SESSION['success'];
+          echo "<div class=\"success\">
+              <span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span> 
+              {$message}
+            </div>";
+          unset($_SESSION['success']);
+      }
+      ?>
         <div class="myform">
           <div class="myform-img">
             <form
@@ -491,15 +536,18 @@
               enctype="multipart/form-data"
               id="libraryImage"
             >
-              Only JPG:<input type="file" name="image" /> Set Key:
+              Only JPG:<input type="file" name="image" /> Set Slug:
               <input required type="text" name="imgkey" />
               <input type="submit" value="upload" name="submit" />
             </form>
           </div>
           <div class="form-palette">
-            Key: <input required type="text" id="imagekey" /> Label:
+            Slug: <input required type="text" id="imagekey" /> Label:
             <input required type="text" id="imglebel" />
             <button onclick="addNodeToPallete()">add</button>
+          </div>
+          <div id="deleteNode" style="width: 100%">
+            
           </div>
         </div>
         <div
@@ -548,7 +596,7 @@
               <label for="cars">Choose which background to Upload : </label>
               <select name="background" id="cars">
                 <option value="primary">Background 1</option>
-                <option value="primary2">Background 2</option>
+                <option value="secondary">Background 2</option>
               </select>
               <input type="file" name="fileToUpload" id="fileToUpload" />
               <input type="submit" value="Upload Image" name="submit" />
@@ -559,7 +607,7 @@
               <label for="cars">Choose which background to Delete : </label>
               <select name="bacDelete">
                 <option value="primary">Background 1</option>
-                <option value="primary2">Background 2</option>
+                <option value="secondary">Background 2</option>
               </select>
               <input type="submit" value="Delete Image" name="submit" />
             </form>
