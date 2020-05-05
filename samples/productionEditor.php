@@ -413,6 +413,7 @@
             }
           });
           diagram.skipsUndoManager = oldskips;
+          writePaletteData();
           loop();
         }, 60);
       }
@@ -435,6 +436,15 @@
         title.textContent = data.text;
         description.textContent = data.description;
       }
+      function writePaletteData(){
+        var data = myPalette.model.nodeDataArray.map((item) => {
+          var obj = {};
+          obj.slug = item.slug;
+          obj.text = item.text;
+          return obj;
+        });
+        document.getElementById("paletteJson").textContent = JSON.stringify(data);
+      }
       function addNodeToPallete() {
         var data = myPalette.model.nodeDataArray.map((item) => {
           var obj = {};
@@ -451,7 +461,6 @@
           });
           var jsonData = JSON.stringify(data);
           localStorage.setItem("paletteData", jsonData);
-          document.getElementById("paletteJson").textContent = jsonData;
           myPalette.model.nodeDataArray = data;
         }
       }
@@ -647,7 +656,7 @@
           ></textarea>
           <button onclick="RestoreModel()">Restore</button>
           <textarea
-            id="restorePalette"
+            id="RestorePalette"
             placeholder="Paste your Image Library json to resotre Image Library"
             style="width: 100%; height: 150px;"
           ></textarea>
@@ -665,7 +674,7 @@
               </div>';
               }
             ?>
-            <div>
+            <div style="margin-top: 20px;">
               Please Upload file first and then click restore.
               <form style="display: block;margin: 20px 0" method="post" action="restoreUpload.php" enctype="multipart/form-data">
                 <input style="margin-bottom: 10px;" name="upload[]" type="file" multiple="multiple" />
