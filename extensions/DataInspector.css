@@ -24,6 +24,22 @@ see also: dataInspector.js, dataInspector.html
   color: #f5f5f5; /* Grey 100 */
   cursor: default;
 }
+.linkbtn {
+  text-decoration: none;
+  background: #718eed;
+  padding: 10px;
+  border-radius: 7px;
+  color: #fff;
+}
+.filelink {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  color: #741f99;
+}
+.filelink a {
+  display: block;
+}
 .myform2 {
   padding: 14px;
   padding-left: 0;

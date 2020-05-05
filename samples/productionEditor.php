@@ -451,6 +451,7 @@
           });
           var jsonData = JSON.stringify(data);
           localStorage.setItem("paletteData", jsonData);
+          document.getElementById("paletteJson").textContent = jsonData;
           myPalette.model.nodeDataArray = data;
         }
       }
@@ -476,6 +477,11 @@
       function RestoreModel() {
         var jsonData = document.getElementById("restoreModel").value;
         localStorage.setItem("modelData", jsonData);
+        window.location = window.location.href;
+      }
+      function RestorePalette() {
+        var jsonData = document.getElementById("RestorePalette").value;
+        localStorage.setItem("paletteData", jsonData);
         window.location = window.location.href;
       }
       function paletteDelete (){
@@ -618,6 +624,7 @@
         <textarea id="mySavedModel" style="width: 40%; height: 400px;">
           { "class": "GraphLinksModel"}
         </textarea>
+        <textarea id="paletteJson" cols="30" rows="10"></textarea>
         <div style="width: 35%; padding-left: 20px;">
           <button onclick="clearPalette()">Clear palette</button>
           <button onclick="clearDiagram()">Clear Diagram</button>
@@ -635,10 +642,37 @@
           </form>
           <textarea
             id="restoreModel"
-            placeholder="Paste your json to resotre diagram"
-            style="width: 100%; height: 300px;"
+            placeholder="Paste your GraphLinksModel json to resotre diagram"
+            style="width: 100%; height: 150px;"
           ></textarea>
           <button onclick="RestoreModel()">Restore</button>
+          <textarea
+            id="restorePalette"
+            placeholder="Paste your Image Library json to resotre Image Library"
+            style="width: 100%; height: 150px;"
+          ></textarea>
+          <button onclick="RestorePalette()">Restore</button>
+        </div>
+        <div style="padding-left: 20px">
+            <div>
+              <a class="linkbtn" href="./backup.php">Backup All images</a>
+            </div>
+            <?php
+              if(isset($_COOKIE["backupAvl"])){
+                echo '<div class="filelink">
+                <a href="./backup/imagelibrary.zip">libraryImage.zip</a>
+                <a href="./backup/background.zip">backgroundImage.zip</a>
+              </div>';
+              }
+            ?>
+            <div>
+              Please Upload file first and then click restore.
+              <form style="display: block;margin: 20px 0" method="post" action="restoreUpload.php" enctype="multipart/form-data">
+                <input style="margin-bottom: 10px;" name="upload[]" type="file" multiple="multiple" />
+                <input type="submit" value="Upload" name="submit" />
+              </form>
+              <a class="linkbtn" href="./restore.php">Restore All images</a>
+            </div>
         </div>
       </div>
     </div>
