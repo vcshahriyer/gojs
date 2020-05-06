@@ -156,7 +156,8 @@
               pickable: true,
             },
             { resizable: true, resizeObjectName: "bac1" },
-            $(go.Picture, { name: "bac1" }, "./background/primary.png")
+            $(go.Picture, { name: "bac1" }, "./background/primary.png"),
+            new go.Binding("position", "position")
           )
         );
         //the background image end
@@ -166,12 +167,13 @@
             go.Part, // this Part is not bound to any model data
             {
               layerName: "Background",
-              position: new go.Point(0, 0),
+              position: new go.Point(150, 150),
               selectable: true,
               pickable: true,
             },
             { resizable: true, resizeObjectName: "bac2" },
-            $(go.Picture, { name: "bac2" }, "./background/secondary.png")
+            $(go.Picture, { name: "bac2" }, "./background/secondary.png"),
+            new go.Binding("position", "position") 
           )
         );
         // the background image end
@@ -298,15 +300,6 @@
             new go.Binding("stroke", "color", colorFunc),
             new go.Binding("strokeWidth", "width").makeTwoWay()
           ),
-          // $(go.Shape, "Arrow", {
-          //   isPanelMain: true,
-          //   name: "PIPE",
-          //   strokeWidth: 3,
-          //   width: 25,
-          //   height: 15,
-          //   strokeDashArray: [20, 40],
-          //   strokeCap: "round",
-          // })
           $(go.Shape, {
             isPanelMain: true,
             stroke: "white",
@@ -319,7 +312,17 @@
             scale: 1.5,
             fill: "gray",
             stroke: null,
-          })
+          },
+          // get the default stroke color from the fromNode
+          new go.Binding("stroke", "fromNode", function (n) {
+              return go.Brush.lighten((n && Colors[n.data.color]) || "gray");
+            }).ofObject(),
+          new go.Binding("fill", "fromNode", function (n) {
+              return go.Brush.lighten((n && Colors[n.data.color]) || "gray");
+            }).ofObject(),
+          new go.Binding("stroke", "color", colorFunc),
+          new go.Binding("fill", "color", colorFunc),
+          )
         );
 
         var SpotNames = [
@@ -389,6 +392,7 @@
         });
         loop();
         deleteNodeHtml();
+        backgroundPosition(myDiagram);
       }
       var opacity = 1;
       var down = true;
@@ -420,6 +424,12 @@
 
       function onSelectionChanged() {
         var node = myDiagram.selection.first();
+        if(node.layerName === "Background"){
+          var pData = JSON.stringify(node.position);
+          localStorage.setItem("bac"+node.__gohashid, pData);
+        }
+        // console.log(node.__gohashid);
+        // console.log(node.layerName)
         if (!(node instanceof go.Node)) return;
         var data = node.data;
         var image = document.getElementById("Image");
@@ -492,6 +502,17 @@
         var jsonData = document.getElementById("RestorePalette").value;
         localStorage.setItem("paletteData", jsonData);
         window.location = window.location.href;
+      }
+      function backgroundPosition(){
+        myDiagram.commit(function(d){
+          d.parts.each((item)=>{
+            if(item.layerName === "Background"){
+              const bacPos = JSON.parse(localStorage.getItem("bac"+item.__gohashid));
+              item.position.x = bacPos.x;
+              item.position.y = bacPos.y;
+            }
+          })
+        })
       }
       function paletteDelete (){
         var node = document.getElementById("paletteDelete").value;

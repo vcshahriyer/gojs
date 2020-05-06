@@ -42,7 +42,7 @@ else{
     header('Location: ' . $_SERVER['HTTP_REFERER']);
     return 0;
 }
-setcookie("backupAvl", "yes", time()+2*24*60*60,'/');
+setcookie("backupAvl", "yes", time()+ 24*60*60,'/');
 $_SESSION['success'] =  $message;
 header('Location: ' . $_SERVER['HTTP_REFERER']);
 ?>
